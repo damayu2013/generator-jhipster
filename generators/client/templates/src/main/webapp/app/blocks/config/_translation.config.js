@@ -14,11 +14,11 @@
         });
 
         $translateProvider.preferredLanguage('<%= nativeLanguageShortName %>');
-        $translateProvider.useCookieStorage();
+        $translateProvider.useStorage('translationStorageProvider');
         $translateProvider.useSanitizeValueStrategy('escaped');
         $translateProvider.addInterpolation('$translateMessageFormatInterpolation');
 
-        tmhDynamicLocaleProvider.localeLocationPattern('bower_components/angular-i18n/angular-locale_{{locale}}.js');
+        tmhDynamicLocaleProvider.localeLocationPattern('i18n/angular-locale_{{locale}}.js');
         tmhDynamicLocaleProvider.useCookieStorage();
         tmhDynamicLocaleProvider.storageKey('NG_TRANSLATE_LANG_KEY');
     }

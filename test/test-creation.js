@@ -120,7 +120,6 @@ const expectedFiles = {
         SERVER_MAIN_SRC_DIR + 'com/mycompany/myapp/service/util/RandomUtil.java',
         SERVER_MAIN_SRC_DIR + 'com/mycompany/myapp/web/filter/package-info.java',
         SERVER_MAIN_SRC_DIR + 'com/mycompany/myapp/web/filter/CachingHttpHeadersFilter.java',
-        SERVER_MAIN_SRC_DIR + 'com/mycompany/myapp/web/filter/StaticResourcesProductionFilter.java',
         SERVER_MAIN_SRC_DIR + 'com/mycompany/myapp/web/filter/CsrfCookieGeneratorFilter.java',
         SERVER_MAIN_SRC_DIR + 'com/mycompany/myapp/web/rest/dto/package-info.java',
         SERVER_MAIN_SRC_DIR + 'com/mycompany/myapp/web/rest/dto/LoggerDTO.java',
@@ -194,6 +193,7 @@ const expectedFiles = {
         CLIENT_MAIN_SRC_DIR + 'app/blocks/config/localstorage.config.js',
         CLIENT_MAIN_SRC_DIR + 'app/blocks/config/alert.config.js',
         CLIENT_MAIN_SRC_DIR + 'app/blocks/config/translation.config.js',
+        CLIENT_MAIN_SRC_DIR + 'app/blocks/config/translation-storage.provider.js',
         CLIENT_MAIN_SRC_DIR + 'app/blocks/config/compile.config.js',
         CLIENT_MAIN_SRC_DIR + 'app/blocks/handlers/state.handler.js',
         CLIENT_MAIN_SRC_DIR + 'app/blocks/handlers/translation.handler.js',
@@ -316,6 +316,7 @@ const expectedFiles = {
         CLIENT_MAIN_SRC_DIR + 'app/components/language/language.filter.js',
         CLIENT_MAIN_SRC_DIR + 'app/components/language/language.constants.js',
         CLIENT_MAIN_SRC_DIR + 'app/blocks/config/translation.config.js',
+        CLIENT_MAIN_SRC_DIR + 'app/blocks/config/translation-storage.provider.js',
         CLIENT_MAIN_SRC_DIR + 'app/blocks/handlers/translation.handler.js'
     ],
 
@@ -362,9 +363,7 @@ const expectedFiles = {
         DOCKER_DIR + 'registry.yml',
         DOCKER_DIR + 'Dockerfile',
         DOCKER_DIR + 'app.dev.yml',
-        DOCKER_DIR + 'app.prod.yml',
-        DOCKER_DIR + 'app.noregistry.dev.yml',
-        DOCKER_DIR + 'app.noregistry.prod.yml'
+        DOCKER_DIR + 'app.prod.yml'
     ]
 };
 

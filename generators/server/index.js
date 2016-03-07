@@ -15,13 +15,14 @@ util.inherits(JhipsterServerGenerator, scriptBase);
 
 /* Constants used throughout */
 const constants = require('../generator-constants'),
-    QUESTIONS =  constants.QUESTIONS,
-    INTERPOLATE_REGEX =  constants.INTERPOLATE_REGEX,
+    QUESTIONS = constants.QUESTIONS,
+    INTERPOLATE_REGEX = constants.INTERPOLATE_REGEX,
     DOCKER_DIR = constants.DOCKER_DIR,
-    CLIENT_MAIN_SRC_DIR = constants.CLIENT_MAIN_SRC_DIR,
-    CLIENT_TEST_SRC_DIR = constants.CLIENT_TEST_SRC_DIR,
     MAIN_DIR = constants.MAIN_DIR,
     TEST_DIR = constants.TEST_DIR,
+    CLIENT_DIST_DIR = constants.CLIENT_DIST_DIR,
+    CLIENT_MAIN_SRC_DIR = constants.CLIENT_MAIN_SRC_DIR,
+    CLIENT_TEST_SRC_DIR = constants.CLIENT_TEST_SRC_DIR,
     SERVER_MAIN_SRC_DIR = constants.SERVER_MAIN_SRC_DIR,
     SERVER_MAIN_RES_DIR = constants.SERVER_MAIN_RES_DIR,
     SERVER_TEST_SRC_DIR = constants.SERVER_TEST_SRC_DIR,
@@ -32,7 +33,7 @@ var configOptions = {};
 var javaDir;
 
 module.exports = JhipsterServerGenerator.extend({
-    constructor: function() {
+    constructor: function () {
         generators.Base.apply(this, arguments);
 
         configOptions = this.options.configOptions || {};
@@ -66,24 +67,24 @@ module.exports = JhipsterServerGenerator.extend({
         });
 
         this.skipClient = !this.options['client-hook'] || configOptions.skipClient || this.config.get('skipClient');
-        this.skipUserManagement = configOptions.skipUserManagement ||  this.config.get('skipUserManagement');
+        this.skipUserManagement = configOptions.skipUserManagement || this.config.get('skipUserManagement');
         this.enableTranslation = this.options['i18n'];
         this.testFrameworks = [];
-        this.options['gatling'] &&  this.testFrameworks.push('gatling');
-        this.options['cucumber'] &&  this.testFrameworks.push('cucumber');
+        this.options['gatling'] && this.testFrameworks.push('gatling');
+        this.options['cucumber'] && this.testFrameworks.push('cucumber');
         var lastQuestion = configOptions.lastQuestion;
         currentQuestion = lastQuestion ? lastQuestion : 0;
         this.logo = configOptions.logo;
         this.baseName = configOptions.baseName;
     },
-    initializing : {
-        displayLogo : function () {
-            if(this.logo){
+    initializing: {
+        displayLogo: function () {
+            if (this.logo) {
                 this.printJHipsterLogo();
             }
         },
 
-        setupServerVars : function () {
+        setupServerVars: function () {
 
             // Make constants available in templates
             this.MAIN_DIR = MAIN_DIR;
@@ -149,15 +150,15 @@ module.exports = JhipsterServerGenerator.extend({
             }
 
             var serverConfigFound = this.packageName != null &&
-            this.authenticationType != null &&
-            this.hibernateCache != null &&
-            this.clusteredHttpSession != null &&
-            this.websocket != null &&
-            this.databaseType != null &&
-            this.devDatabaseType != null &&
-            this.prodDatabaseType != null &&
-            this.searchEngine != null &&
-            this.buildTool != null;
+                this.authenticationType != null &&
+                this.hibernateCache != null &&
+                this.clusteredHttpSession != null &&
+                this.websocket != null &&
+                this.databaseType != null &&
+                this.devDatabaseType != null &&
+                this.prodDatabaseType != null &&
+                this.searchEngine != null &&
+                this.buildTool != null;
 
             if (this.baseName != null && serverConfigFound) {
 
@@ -188,7 +189,7 @@ module.exports = JhipsterServerGenerator.extend({
                 }
 
                 this.log(chalk.green('This is an existing project, using the configuration from your .yo-rc.json file \n' +
-                'to re-generate the project...\n'));
+                    'to re-generate the project...\n'));
 
                 this.existingProject = true;
             }
@@ -198,16 +199,13 @@ module.exports = JhipsterServerGenerator.extend({
     prompting: {
 
         askForModuleName: function () {
-            if(this.baseName){
-                return;
-            }
+            if (this.baseName) return;
+
             this.askModuleName(this, ++currentQuestion, QUESTIONS);
         },
 
-        askForServerSideOpts: function (){
-            if(this.existingProject){
-                return;
-            }
+        askForServerSideOpts: function () {
+            if (this.existingProject) return;
 
             var done = this.async();
             var applicationType = this.applicationType;
@@ -562,11 +560,11 @@ module.exports = JhipsterServerGenerator.extend({
         },
 
         askFori18n: function () {
-            if(this.existingProject || configOptions.skipI18nQuestion) return;
+            if (this.existingProject || configOptions.skipI18nQuestion) return;
             this.aski18n(this, ++currentQuestion, QUESTIONS);
         },
 
-        setSharedConfigOptions : function () {
+        setSharedConfigOptions: function () {
             configOptions.lastQuestion = currentQuestion;
             configOptions.packageName = this.packageName;
             configOptions.hibernateCache = this.hibernateCache;
@@ -579,6 +577,13 @@ module.exports = JhipsterServerGenerator.extend({
             configOptions.buildTool = this.buildTool;
             configOptions.enableSocialSignIn = this.enableSocialSignIn;
             configOptions.authenticationType = this.authenticationType;
+
+            // Make dist dir available in templates
+            if (this.buildTool === 'maven') {
+                this.CLIENT_DIST_DIR = 'target/' + CLIENT_DIST_DIR;
+            } else {
+                this.CLIENT_DIST_DIR = 'build/' + CLIENT_DIST_DIR;
+            }
         }
     },
 
@@ -623,7 +628,6 @@ module.exports = JhipsterServerGenerator.extend({
             javaDir = this.javaDir = SERVER_MAIN_SRC_DIR + this.packageFolder + '/';
             this.testDir = SERVER_TEST_SRC_DIR + this.packageFolder + '/';
             this.nativeLanguageShortName = this.enableTranslation && this.nativeLanguage ? this.nativeLanguage.split("-")[0] : 'en';
-
         },
 
         saveConfig: function () {
@@ -654,27 +658,28 @@ module.exports = JhipsterServerGenerator.extend({
     default: {
         getSharedConfigOptions: function () {
             this.useSass = configOptions.useSass ? configOptions.useSass : false;
-            if(configOptions.enableTranslation != null) {
+            if (configOptions.enableTranslation != null) {
                 this.enableTranslation = configOptions.enableTranslation;
             }
-            if(configOptions.nativeLanguage != null) {
+            if (configOptions.nativeLanguage != null) {
                 this.nativeLanguage = configOptions.nativeLanguage;
             }
-            if(configOptions.languages != null) {
+            if (configOptions.languages != null) {
                 this.languages = configOptions.languages;
             }
-            if(configOptions.testFrameworks) {
+            if (configOptions.testFrameworks) {
                 this.testFrameworks = configOptions.testFrameworks;
             }
         },
 
-        composeLanguages : function () {
-            if(configOptions.skipI18nQuestion) return;
+        composeLanguages: function () {
+            if (configOptions.skipI18nQuestion) return;
+
             this.composeLanguagesSub(this, configOptions, 'server');
         }
     },
 
-    writing : {
+    writing: {
 
         writeGlobalFiles: function () {
             this.template('_README.md', 'README.md', this, {});
@@ -687,10 +692,10 @@ module.exports = JhipsterServerGenerator.extend({
         writeDockerFiles: function () {
             // Create docker-compose file
             this.template(DOCKER_DIR + '_sonar.yml', DOCKER_DIR + 'sonar.yml', this, {});
-            if (this.devDatabaseType != "h2Disk" && this.devDatabaseType != "h2Memory" && this.devDatabaseType != "oracle") {
+            if (this.devDatabaseType != "no" && this.devDatabaseType != "h2Disk" && this.devDatabaseType != "h2Memory" && this.devDatabaseType != "oracle") {
                 this.template(DOCKER_DIR + '_dev.yml', DOCKER_DIR + 'dev.yml', this, {});
             }
-            if (this.prodDatabaseType != "oracle" || this.searchEngine == "elasticsearch") {
+            if ((this.prodDatabaseType != "no" && this.prodDatabaseType != "oracle") || this.searchEngine == "elasticsearch") {
                 this.template(DOCKER_DIR + '_prod.yml', DOCKER_DIR + 'prod.yml', this, {});
             }
             if (this.devDatabaseType == "cassandra") {
@@ -706,9 +711,7 @@ module.exports = JhipsterServerGenerator.extend({
                 this.template(DOCKER_DIR + '_registry.yml', DOCKER_DIR + 'registry.yml', this, {});
                 this.template(DOCKER_DIR + '_Dockerfile', DOCKER_DIR + 'Dockerfile', this, {});
                 this.template(DOCKER_DIR + '_app.dev.yml', DOCKER_DIR + 'app.dev.yml', this, {});
-                this.template(DOCKER_DIR + '_app.noregistry.dev.yml', DOCKER_DIR + 'app.noregistry.dev.yml', this, {});
                 this.template(DOCKER_DIR + '_app.prod.yml', DOCKER_DIR + 'app.prod.yml', this, {});
-                this.template(DOCKER_DIR + '_app.noregistry.prod.yml', DOCKER_DIR + 'app.noregistry.prod.yml', this, {});
             }
         },
 
@@ -719,7 +722,7 @@ module.exports = JhipsterServerGenerator.extend({
                     this.template('_build.gradle', 'build.gradle', this, {});
                     this.template('_settings.gradle', 'settings.gradle', this, {});
                     this.template('_gradle.properties', 'gradle.properties', this, {});
-                    if(!this.skipClient) {
+                    if (!this.skipClient) {
                         this.template('gradle/_yeoman.gradle', 'gradle/yeoman.gradle', this, {});
                     }
                     this.template('gradle/_sonar.gradle', 'gradle/sonar.gradle', this, {});
@@ -808,7 +811,7 @@ module.exports = JhipsterServerGenerator.extend({
             }
 
             /* Skip the code below for --skip-user-management */
-            if(this.skipUserManagement) return;
+            if (this.skipUserManagement) return;
 
             this.template(SERVER_MAIN_SRC_DIR + 'package/config/_SecurityConfiguration.java', javaDir + 'config/SecurityConfiguration.java', this, {});
 
@@ -822,7 +825,9 @@ module.exports = JhipsterServerGenerator.extend({
             this.template(SERVER_MAIN_SRC_DIR + 'package/security/_UserNotActivatedException.java', javaDir + 'security/UserNotActivatedException.java', this, {});
 
             if (this.authenticationType == 'jwt') {
+                this.template(SERVER_MAIN_SRC_DIR + 'package/web/rest/dto/_LoginDTO.java', javaDir + 'web/rest/dto/LoginDTO.java', this, {});
                 this.template(SERVER_MAIN_SRC_DIR + 'package/web/rest/_UserJWTController.java', javaDir + 'web/rest/UserJWTController.java', this, {});
+                this.template(SERVER_MAIN_SRC_DIR + 'package/web/rest/_JWTToken.java', javaDir + 'web/rest/JWTToken.java', this, {});
             }
 
             if (this.authenticationType == 'oauth2') {
@@ -875,6 +880,7 @@ module.exports = JhipsterServerGenerator.extend({
             this.template(SERVER_MAIN_SRC_DIR + 'package/config/apidoc/_GatewaySwaggerResourcesProvider.java', javaDir + 'config/apidoc/GatewaySwaggerResourcesProvider.java', this, {});
             this.template(SERVER_MAIN_SRC_DIR + 'package/gateway/ratelimiting/_RateLimitingFilter.java', javaDir + 'gateway/ratelimiting/RateLimitingFilter.java', this, {});
             this.template(SERVER_MAIN_SRC_DIR + 'package/gateway/ratelimiting/_RateLimitingRepository.java', javaDir + 'gateway/ratelimiting/RateLimitingRepository.java', this, {});
+            this.template(SERVER_MAIN_SRC_DIR + 'package/gateway/accesscontrol/_AccessControlFilter.java', javaDir + 'gateway/accesscontrol/AccessControlFilter.java', this, {});
             this.template(SERVER_MAIN_SRC_DIR + 'package/web/rest/dto/_RouteDTO.java', javaDir + 'web/rest/dto/RouteDTO.java', this, {});
             this.template(SERVER_MAIN_SRC_DIR + 'package/web/rest/_GatewayResource.java', javaDir + 'web/rest/GatewayResource.java', this, {});
         },
@@ -995,7 +1001,7 @@ module.exports = JhipsterServerGenerator.extend({
             this.template(SERVER_MAIN_SRC_DIR + 'package/service/_package-info.java', javaDir + 'service/package-info.java', this, {});
 
             /* Skip the code below for --skip-user-management */
-            if(this.skipUserManagement) return;
+            if (this.skipUserManagement) return;
 
             this.template(SERVER_MAIN_SRC_DIR + 'package/service/util/_RandomUtil.java', javaDir + 'service/util/RandomUtil.java', this, {});
         },
@@ -1016,7 +1022,6 @@ module.exports = JhipsterServerGenerator.extend({
 
             this.template(SERVER_MAIN_SRC_DIR + 'package/web/filter/_package-info.java', javaDir + 'web/filter/package-info.java', this, {});
             this.template(SERVER_MAIN_SRC_DIR + 'package/web/filter/_CachingHttpHeadersFilter.java', javaDir + 'web/filter/CachingHttpHeadersFilter.java', this, {});
-            this.template(SERVER_MAIN_SRC_DIR + 'package/web/filter/_StaticResourcesProductionFilter.java', javaDir + 'web/filter/StaticResourcesProductionFilter.java', this, {});
             this.template(SERVER_MAIN_SRC_DIR + 'package/web/rest/dto/_package-info.java', javaDir + 'web/rest/dto/package-info.java', this, {});
             this.template(SERVER_MAIN_SRC_DIR + 'package/web/rest/dto/_LoggerDTO.java', javaDir + 'web/rest/dto/LoggerDTO.java', this, {});
 
@@ -1031,7 +1036,7 @@ module.exports = JhipsterServerGenerator.extend({
 
         writeServerJavaWebsocketFiles: function () {
 
-            if(this.websocket != 'spring-websocket') return;
+            if (this.websocket != 'spring-websocket') return;
 
             this.template(SERVER_MAIN_SRC_DIR + 'package/web/websocket/_package-info.java', javaDir + 'web/websocket/package-info.java', this, {});
             this.template(SERVER_MAIN_SRC_DIR + 'package/web/websocket/_ActivityService.java', javaDir + 'web/websocket/ActivityService.java', this, {});
@@ -1077,9 +1082,9 @@ module.exports = JhipsterServerGenerator.extend({
             }
         },
 
-        writeJavaUserManagementFiles : function () {
+        writeJavaUserManagementFiles: function () {
 
-            if(this.skipUserManagement) return;
+            if (this.skipUserManagement) return;
             // user management related files
 
             /* User management resources files */
