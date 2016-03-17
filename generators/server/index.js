@@ -672,6 +672,7 @@ module.exports = JhipsterServerGenerator.extend({
             configOptions.buildTool = this.buildTool;
             configOptions.enableSocialSignIn = this.enableSocialSignIn;
             configOptions.authenticationType = this.authenticationType;
+            configOptions.serverPort = this.serverPort;
 
             // Make dist dir available in templates
             if (this.buildTool === 'maven') {
@@ -824,9 +825,7 @@ module.exports = JhipsterServerGenerator.extend({
                         this.template('gradle/_yeoman.gradle', 'gradle/yeoman.gradle', this, {});
                     }
                     this.template('gradle/_sonar.gradle', 'gradle/sonar.gradle', this, {});
-                    if (this.applicationType == 'microservice' || this.applicationType == 'gateway') {
-                        this.template('gradle/_docker.gradle', 'gradle/docker.gradle', this, {});
-                    }
+                    this.template('gradle/_docker.gradle', 'gradle/docker.gradle', this, {});
                     this.template('gradle/_profile_dev.gradle', 'gradle/profile_dev.gradle', this, {'interpolate': INTERPOLATE_REGEX});
                     this.template('gradle/_profile_prod.gradle', 'gradle/profile_prod.gradle', this, {'interpolate': INTERPOLATE_REGEX});
                     this.template('gradle/_mapstruct.gradle', 'gradle/mapstruct.gradle', this, {'interpolate': INTERPOLATE_REGEX});

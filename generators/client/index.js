@@ -106,14 +106,13 @@ module.exports = JhipsterClientGenerator.extend({
         this.searchEngine = this.options['search-engine'];
         this.hibernateCache = this.options['hb-cache'];
         this.jhiPrefix = this.options['jhi-prefix'];
-        this.jhiPrefixCapitalized = _.capitalize(this.jhiPrefix);
+        this.jhiPrefixCapitalized = _.upperFirst(this.jhiPrefix);
         this.testFrameworks = [];
         this.options['protractor'] && this.testFrameworks.push('protractor');
         currentQuestion = configOptions.lastQuestion ? configOptions.lastQuestion : 0;
         totalQuestions = configOptions.totalQuestions ? configOptions.totalQuestions : QUESTIONS;
         this.baseName = configOptions.baseName;
         this.logo = configOptions.logo;
-
     },
 
     initializing: {
@@ -128,6 +127,7 @@ module.exports = JhipsterClientGenerator.extend({
             this.MAIN_SRC_DIR = MAIN_SRC_DIR;
             this.TEST_SRC_DIR = TEST_SRC_DIR;
 
+            this.serverPort = this.config.get('serverPort') || configOptions.serverPort || 8080;
             this.applicationType = this.config.get('applicationType') || configOptions.applicationType;
             if (!this.applicationType) {
                 this.applicationType = 'monolith';
@@ -220,7 +220,7 @@ module.exports = JhipsterClientGenerator.extend({
             // Application name modified, using each technology's conventions
             this.angularAppName = this.getAngularAppName();
             this.camelizedBaseName = _.camelCase(this.baseName);
-            this.capitalizedBaseName = _.capitalize(this.baseName);
+            this.capitalizedBaseName = _.upperFirst(this.baseName);
             this.dasherizedBaseName = _.kebabCase(this.baseName);
             this.lowercaseBaseName = this.baseName.toLowerCase();
             this.nativeLanguageShortName = this.enableTranslation && this.nativeLanguage ? this.nativeLanguage.split("-")[0] : 'en';
