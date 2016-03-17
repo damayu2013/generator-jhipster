@@ -10,7 +10,7 @@
     </parent>
 
     <groupId><%= packageName %></groupId>
-    <artifactId><%= slugifiedBaseName %></artifactId>
+    <artifactId><%= dasherizedBaseName %></artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
     <name><%= baseName %></name>
@@ -54,7 +54,7 @@
         <gatling-maven-plugin.version>2.1.7</gatling-maven-plugin.version>
         <%_ } _%>
         <%_ if (clusteredHttpSession == 'hazelcast' || hibernateCache == 'hazelcast') { _%>
-        <hazelcast.version>3.5.4</hazelcast.version>
+        <hazelcast.version>3.6.1</hazelcast.version>
         <%_ } _%>
         <%_ if (databaseType == 'sql') { _%>
         <hibernate.version>4.3.11.Final</hibernate.version>
@@ -86,7 +86,7 @@
         <%_ } _%>
         <run.addResources>false</run.addResources>
         <%_ if (applicationType == 'microservice' || applicationType == 'gateway') { _%>
-        <spring-cloud.version>1.1.0.M4</spring-cloud.version>
+        <spring-cloud.version>1.1.0.M5</spring-cloud.version>
         <%_ } _%>
         <spring-security.version>4.0.4.RELEASE</spring-security.version>
         <%_ if (authenticationType == 'oauth2') { _%>
@@ -116,10 +116,8 @@
         <sonar.sources>${project.basedir}/<%= MAIN_DIR %></sonar.sources>
         <sonar.surefire.reportsPath>${project.testresult.directory}/surefire-reports</sonar.surefire.reportsPath>
         <sonar.tests>${project.basedir}/<%= TEST_DIR %></sonar.tests>
-        <%_ if (applicationType == 'microservice' || applicationType == 'gateway') { _%>
         <!-- Docker properties -->
         <docker.image.prefix>jhipster</docker.image.prefix>
-        <%_ } _%>
     </properties>
 
     <dependencies>
@@ -918,7 +916,6 @@
                     </arguments>
                 </configuration>
             </plugin>
-            <%_ if (applicationType == 'microservice' || applicationType == 'gateway') { _%>
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
@@ -935,7 +932,6 @@
                     </resources>
                 </configuration>
             </plugin>
-            <%_ } _%>
             <!-- jhipster-needle-maven-add-plugin -->
         </plugins>
         <pluginManagement>

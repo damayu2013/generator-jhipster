@@ -4,7 +4,6 @@ var util = require('util'),
     generators = require('yeoman-generator'),
     chalk = require('chalk'),
     _ = require('lodash'),
-    _s = require('underscore.string'),
     scriptBase = require('../generator-base'),
     mkdirp = require('mkdirp'),
     html = require("html-wiring"),
@@ -17,13 +16,14 @@ util.inherits(JhipsterClientGenerator, scriptBase);
 
 /* Constants use throughout */
 const constants = require('../generator-constants'),
-    QUESTIONS = constants.QUESTIONS,
+    QUESTIONS = constants.CLIENT_QUESTIONS,
     DIST_DIR = constants.CLIENT_DIST_DIR,
     MAIN_SRC_DIR = constants.CLIENT_MAIN_SRC_DIR,
     TEST_SRC_DIR = constants.CLIENT_TEST_SRC_DIR,
     ANGULAR_DIR = constants.ANGULAR_DIR;
 
 var currentQuestion;
+var totalQuestions;
 var configOptions = {};
 
 module.exports = JhipsterClientGenerator.extend({
@@ -109,8 +109,8 @@ module.exports = JhipsterClientGenerator.extend({
         this.jhiPrefixCapitalized = _.capitalize(this.jhiPrefix);
         this.testFrameworks = [];
         this.options['protractor'] && this.testFrameworks.push('protractor');
-        var lastQuestion = configOptions.lastQuestion;
-        currentQuestion = lastQuestion ? lastQuestion : 0;
+        currentQuestion = configOptions.lastQuestion ? configOptions.lastQuestion : 0;
+        totalQuestions = configOptions.totalQuestions ? configOptions.totalQuestions : QUESTIONS;
         this.baseName = configOptions.baseName;
         this.logo = configOptions.logo;
 
@@ -166,18 +166,23 @@ module.exports = JhipsterClientGenerator.extend({
 
             if (this.baseName) return;
 
-            this.askModuleName(this, ++currentQuestion, QUESTIONS);
+            this.askModuleName(this, currentQuestion++, totalQuestions);
         },
 
         askForClientSideOpts: function () {
             if (this.existingProject) return;
 
             var done = this.async();
+            var getNumberedQuestion = this.getNumberedQuestion;
             var prompts = [
                 {
                     type: 'confirm',
                     name: 'useSass',
-                    message: '(' + (++currentQuestion) + '/' + QUESTIONS + ') Would you like to use the LibSass stylesheet preprocessor for your CSS?',
+                    message: function (response) {
+                        return getNumberedQuestion('Would you like to use the LibSass stylesheet preprocessor for your CSS?', currentQuestion, totalQuestions, function (current) {
+                            currentQuestion = current;
+                        }, true);
+                    },
                     default: false
                 }
             ];
@@ -190,11 +195,12 @@ module.exports = JhipsterClientGenerator.extend({
         askFori18n: function () {
             if (this.existingProject || configOptions.skipI18nQuestion) return;
 
-            this.aski18n(this, ++currentQuestion, QUESTIONS);
+            this.aski18n(this, currentQuestion++, totalQuestions);
         },
 
         setSharedConfigOptions: function () {
             configOptions.lastQuestion = currentQuestion;
+            configOptions.totalQuestions = totalQuestions;
             configOptions.useSass = this.useSass;
         }
 
@@ -213,8 +219,9 @@ module.exports = JhipsterClientGenerator.extend({
         configureGlobal: function () {
             // Application name modified, using each technology's conventions
             this.angularAppName = this.getAngularAppName();
-            this.camelizedBaseName = _s.camelize(this.baseName);
-            this.slugifiedBaseName = _s.slugify(this.baseName);
+            this.camelizedBaseName = _.camelCase(this.baseName);
+            this.capitalizedBaseName = _.capitalize(this.baseName);
+            this.dasherizedBaseName = _.kebabCase(this.baseName);
             this.lowercaseBaseName = this.baseName.toLowerCase();
             this.nativeLanguageShortName = this.enableTranslation && this.nativeLanguage ? this.nativeLanguage.split("-")[0] : 'en';
         },
@@ -386,7 +393,11 @@ module.exports = JhipsterClientGenerator.extend({
                 this.copyHtml(ANGULAR_DIR + 'account/social/_social-register.html', ANGULAR_DIR + 'account/social/social-register.html');
                 this.template(ANGULAR_DIR + 'account/social/_social-register.controller.js', ANGULAR_DIR + 'account/social/social-register.controller.js', this, {});
                 this.template(ANGULAR_DIR + 'account/social/_social.service.js', ANGULAR_DIR + 'account/social/social.service.js', this, {});
-                this.copyJs(ANGULAR_DIR + 'account/social/_social-register.state.js', ANGULAR_DIR + 'account/social/social-register.state.js', this, {});
+                this.copyJs(ANGULAR_DIR + 'account/social/_social.state.js', ANGULAR_DIR + 'account/social/social.state.js', this, {});
+
+                if (this.authenticationType == 'jwt') {
+                    this.template(ANGULAR_DIR + 'account/social/_social-auth.controller.js', ANGULAR_DIR + 'account/social/social-auth.controller.js', this, {});
+                }
             }
         },
 

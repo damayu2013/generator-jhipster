@@ -118,7 +118,6 @@ module.exports = EntityGenerator.extend({
             this.languages = this.config.get('languages');
             this.buildTool = this.config.get('buildTool');
             this.testFrameworks = this.config.get('testFrameworks');
-            this.pathConfigs = this._globalConfig.get('pathConfigs');
             // backward compatibility on testing frameworks
             if (this.testFrameworks == null) {
                 this.testFrameworks = ['gatling'];
@@ -135,18 +134,6 @@ module.exports = EntityGenerator.extend({
                 this.log(chalk.green('\nFound the ' + this.filename + ' configuration file, entity can be automatically generated!\n'));
                 this.useConfigurationFile = true;
                 this.fromPath = this.filename;
-            }
-            else {
-                if (this.pathConfigs) {
-                    var pathConfig = this.pathConfigs[this.entityNameCapitalized];
-                    if (pathConfig) {
-                        this.log(chalk.green('\nFound the ' + this.filename + ' configuration file in remote microservice ' +  pathConfig.appName));
-                        this.log(chalk.green('\nUsing configuration file ' + pathConfig.entityPath));
-                        this.useConfigurationFile = true;
-                        this.fromPath = pathConfig.entityPath;
-                        this.microserviceName = pathConfig.appName;
-                    }
-                }
             }
         },
 
@@ -1638,14 +1625,7 @@ module.exports = EntityGenerator.extend({
                 return;
             }
 
-            if (_.isUndefined(this.pathConfigs)) this.pathConfigs = {};
-
-            this.pathConfigs[this.entityNameCapitalized] = {
-                appName: this.microserviceName,
-                entityPath: this.microservicePath + '/' + this.jhipsterConfigDirectory + '/' + this.entityNameCapitalized + '.json'
-            };
-
-            this._globalConfig.set('pathConfigs', this.pathConfigs);
+            this.copy(this.microservicePath + '/' + this.jhipsterConfigDirectory + '/' + this.entityNameCapitalized + '.json', this.destinationPath(this.jhipsterConfigDirectory + '/' + this.entityNameCapitalized + '.json'));
         },
 
         writeEnumFiles: function() {
@@ -1769,10 +1749,12 @@ module.exports = EntityGenerator.extend({
         },
 
         writeTestFiles: function() {
-            if (this.skipServer) return;
 
-            this.template(SERVER_TEST_SRC_DIR + 'package/web/rest/_EntityResourceIntTest.java',
-                SERVER_TEST_SRC_DIR + this.packageFolder + '/web/rest/' + this.entityClass + 'ResourceIntTest.java', this, {});
+            if (!this.skipServer) {
+                this.template(SERVER_TEST_SRC_DIR + 'package/web/rest/_EntityResourceIntTest.java',
+                    SERVER_TEST_SRC_DIR + this.packageFolder + '/web/rest/' + this.entityClass + 'ResourceIntTest.java', this, {});
+            }
+
 
             if (this.testFrameworks.indexOf('gatling') != -1) {
                 this.template(TEST_DIR + 'gatling/simulations/_EntityGatlingTest.scala',
