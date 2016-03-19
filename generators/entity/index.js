@@ -1588,7 +1588,7 @@ module.exports = EntityGenerator.extend({
             this.entityFileName = entityNameSpinalCased + this.entityAngularJSSuffix;
             this.entityPluralFileName = entityNamePluralizedAndSpinalCased + this.entityAngularJSSuffix;
             this.entityServiceFileName = entityNameSpinalCased;
-            this.entityAngularJSName = this.entityClass + _.camelCase(this.entityAngularJSSuffix);
+            this.entityAngularJSName = this.entityClass + _.upperFirst(_.camelCase(this.entityAngularJSSuffix));
             this.entityStateName = entityNameSpinalCased + this.entityAngularJSSuffix;
             this.entityUrl = entityNameSpinalCased + this.entityAngularJSSuffix;
             this.entityTranslationKey = this.entityInstance;
@@ -1754,12 +1754,14 @@ module.exports = EntityGenerator.extend({
                     SERVER_TEST_SRC_DIR + this.packageFolder + '/web/rest/' + this.entityClass + 'ResourceIntTest.java', this, {});
             }
 
-
             if (this.testFrameworks.indexOf('gatling') != -1) {
                 this.template(TEST_DIR + 'gatling/simulations/_EntityGatlingTest.scala',
                     TEST_DIR + 'gatling/simulations/' + this.entityClass + 'GatlingTest.scala', this, {'interpolate': INTERPOLATE_REGEX});
             }
 
+            if (this.searchEngine == 'elasticsearch') {
+                this.template(SERVER_TEST_SRC_DIR + 'package/config/elasticsearch/_EntityIndexInitializer.java', SERVER_TEST_SRC_DIR + this.packageFolder + '/config/elasticsearch/' + this.entityClass + 'IndexInitializer.java', this, {});
+            }
         }
     },
 

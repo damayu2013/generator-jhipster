@@ -105,7 +105,7 @@ module.exports = JhipsterServerGenerator.extend({
             this.packageName = this.config.get('packageName');
             this.serverPort = this.config.get('serverPort');
             if (this.serverPort == undefined) {
-                this.serverPort = 8080;
+                this.serverPort = '8080';
             }
             this.authenticationType = this.config.get('authenticationType');
             this.clusteredHttpSession = this.config.get('clusteredHttpSession');
@@ -622,6 +622,9 @@ module.exports = JhipsterServerGenerator.extend({
 
                 this.packageName = props.packageName;
                 this.serverPort = props.serverPort;
+                if (this.serverPort == undefined) {
+                    this.serverPort = '8080';
+                }
                 this.hibernateCache = props.hibernateCache;
                 this.clusteredHttpSession = props.clusteredHttpSession;
                 this.websocket = props.websocket;
@@ -1188,6 +1191,11 @@ module.exports = JhipsterServerGenerator.extend({
                 this.template(SERVER_TEST_SRC_DIR + 'package/cucumber/_CucumberTest.java', testDir + 'cucumber/CucumberTest.java', this, {});
                 this.template(SERVER_TEST_SRC_DIR + 'package/cucumber/stepdefs/_StepDefs.java', testDir + 'cucumber/stepdefs/StepDefs.java', this, {});
                 mkdirp(TEST_DIR + 'features/');
+            }
+
+            // Create ElasticSearch test files
+            if (this.searchEngine == 'elasticsearch') {
+                this.template(SERVER_TEST_SRC_DIR + 'package/config/elasticsearch/_AbstractIndexInitializer.java', testDir + 'config/elasticsearch/AbstractIndexInitializer.java', this, {});
             }
         },
 
